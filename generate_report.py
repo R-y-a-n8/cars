@@ -29,7 +29,6 @@ STATUS_COLORS = {
 }
 
 CHART_CONFIG = {"displayModeBar": False, "responsive": True}
-PLOTLY_CDN = "https://cdn.plot.ly/plotly-2.35.2.min.js"
 
 
 # ── Data preparation ─────────────────────────────────────────────────────────
@@ -383,7 +382,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Procurement Report – Purchase Order Analysis</title>
-  <script src="{plotly_cdn}"></script>
+  <script>{plotly_js}</script>
   <style>
     *, *::before, *::after {{ box-sizing: border-box; }}
     body {{
@@ -519,6 +518,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
 
 def build_report(output_path: str = "procurement_report.html"):
     from datetime import date
+    from plotly.offline import get_plotlyjs
 
     raw  = get_purchase_orders()
     df   = get_kes_equivalent(raw)
@@ -528,7 +528,7 @@ def build_report(output_path: str = "procurement_report.html"):
     html = HTML_TEMPLATE.format(
         primary=PRIMARY, secondary=SECONDARY, accent=ACCENT,
         success=SUCCESS, light_bg=LIGHT_BG, card_bg=CARD_BG,
-        plotly_cdn=PLOTLY_CDN,
+        plotly_js=get_plotlyjs(),
         report_date=date.today().strftime("%d %B %Y"),
         total_kes=f"KES {t['grand_total_kes']:,.0f}",
         order_count=t["order_count"],
